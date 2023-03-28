@@ -31,7 +31,7 @@ module.exports = {
             }
             const embed = new EmbedBuilder()
                 .setAuthor({
-                    name: `${message.guild.members.me.displayName} Status Info!`,
+                    name: `${message.guild.members.me.displayName} Satus Info!`,
                     iconURL: message.guild.iconURL({ dynamic: true }),
                 })
                 .addFields([
