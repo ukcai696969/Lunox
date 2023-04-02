@@ -6,7 +6,6 @@ module.exports = {
     prefix: process.env.PREFIX || "!", // your bot prefix "for owner message command"
     color: process.env.EMBED_COLOR || " ", // your embeded hex color
     owner: process.env.OWNER_ID || " ", // your bot Owners ID
-    errorLogs: process.env.ERROR_LOGS || " ", // your error logs Channel ID
     guildLogs: process.env.GUILD_LOGS || " ", // your server join left logs Channel ID
     leaveTimeout: process.env.LEAVE_TIMEOUT || "60000", // set leave TimeOut when bot was alone 1000 = 1sec
 
@@ -18,8 +17,8 @@ module.exports = {
         clientSecret: process.env.SPOTIFY_SECRET || " ", // your Spotify Client Secret
         reconnectTries: 5, // total attemps to try if reconnect failed. you can change it to "Infinity" for unlimited attemps.
         playlistLimit: 2, // 1 = 100 tracks
-        albumLimit: 2,
-        artistLimit: 2,
+        albumLimit: 2, // 1 = 50 tracks
+        artistLimit: 2, // 1 = 50 tracks
         searchMarket: "us",
     },
     nodes: [
@@ -36,7 +35,7 @@ module.exports = {
     mongoUri: process.env.MONGO_URI || " ", // your MongoDB Url
     supportUrl: process.env.SUPPORT_URL || "", // your Support Server Link
     inviteUrl: process.env.INVITE_URL || " ", // your Bot Invite Link
-    voteUrl: process.env.VOTE_URL || "https://top.gg/bot/1022221914145566815/vote", // your Bot Vote Link [DONT FORGER TO VOTE MY BOT :)]
+    voteUrl: process.env.VOTE_URL || "https://top.gg/bot/1022221914145566815/vote", // your Bot Vote Link [DONT FORGET TO VOTE MY BOT :)]
     imageUrl: process.env.IMAGE_URL || " ", // your Bot Banner Imange Link to use on "help" & "about" command
 };
 

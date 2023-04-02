@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Lunox&fontSize=80&fontAlignY=35&animation=twinkling&fontColor=gradient"/> </a> 
+<img src="https://cdn.discordapp.com/attachments/1014342568554811443/1064215983289548850/LUNOX.png"/> </a> 
 </p>
 
 <p align="center"> 
@@ -23,7 +23,7 @@
 - [x] Music System
 - [x] Premium System
 - [x] Custom Filters
-- [x] 24/7 Voice [Make Sure You Read This [Note](https://github.com/adh319/Lunox/commit/b4880fb419d9136f96c90411e9b9c2c3c984b384)]
+- [x] 24/7 Voice [Make Sure You Read This **[Note](https://github.com/adh319/Lunox/commit/b4880fb419d9136f96c90411e9b9c2c3c984b384)**]
 - [x] AutoPlay [YouTube Only]
 - [x] Clean UI
 - [x] Easy to use
@@ -73,7 +73,7 @@
 
 ## `🛑` Super Requirements 
 
-- Java 11-13 **[Download JDK13](http://www.mediafire.com/file/m6gk7aoq96db8g0/file)** (i use this version) for LAVALINK!
+- Java 11-13 **[Download JDK13](http://www.mediafire.com/file/m6gk7aoq96db8g0/file)** (i used this version) for LAVALINK!
 
 ## `📚` Installation
 
@@ -83,12 +83,12 @@ cd Lunox
 npm install
 ```
 
-## `📄` Configuration
+## `📄` Configuration & Starting
 
 Rename `.env.example` to `.env` and fill out these values. You can find the details on `/src/settings/config.js`:
 
 ```#########################################
-## SEE THE DETAILS ON "CONFIG.JS" FILE ##
+## SEE THE DETAILS ON "/SRC/SETTINGS/CONFIG.JS" FILE ##
 #########################################
 
 #BOT DETAILS
@@ -96,7 +96,6 @@ TOKEN =
 PREFIX = 
 EMBED_COLOR = 
 OWNER_ID = 
-ERROR_LOGS = 
 GUILD_LOGS = 
 LEAVE_TIMEOUT = 
 
@@ -129,6 +128,8 @@ Distributed under the `MIT License`. See [`LICENSE`](https://github.com/adh319/L
 - [Github Sponsor](https://github.com/sponsors/adh319)
 - [PayPal](https://paypal.me/dh319)
 - [Ko-Fi](https://ko-fi.com/adh319)
+
+Also make sure to give a **⭐** to this project if you like it 😉!
 
 ## `👏` Special Thanks
 
