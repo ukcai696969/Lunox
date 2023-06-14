@@ -23,10 +23,7 @@ module.exports = {
         let player = client.poru.players.get(interaction.guild.id);
 
         if (player) {
-            const embed = new EmbedBuilder()
-                .setColor(client.color)
-                .setDescription(`\`❌\` | I already joined a voice channel.`)
-                .setTimestamp();
+            const embed = new EmbedBuilder().setColor(client.color).setDescription(`\`❌\` | I already joined a voice channel.`);
 
             return interaction.editReply({ embeds: [embed] });
         }
@@ -36,6 +33,7 @@ module.exports = {
                 guildId: interaction.guild.id,
                 voiceChannel: interaction.member.voice.channel.id,
                 textChannel: interaction.channel.id,
+                region: interaction.member.voice.channel.rtcRegion || undefined,
                 deaf: true,
             });
 

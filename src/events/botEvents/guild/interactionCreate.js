@@ -1,5 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionType } = require("discord.js");
 const { supportUrl } = require("../../../settings/config.js");
+const Ban = require("../../../settings/models/Ban.js");
 
 module.exports.run = async (client, interaction) => {
     if (interaction.type === InteractionType.ApplicationCommand) {
@@ -11,17 +12,34 @@ module.exports.run = async (client, interaction) => {
 
         if (!command) return;
 
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder().setLabel("Support").setURL(supportUrl).setStyle(ButtonStyle.Link),
+        );
+
+        if (client.dev.has(true) && interaction.user.id !== client.owner) {
+            return interaction.reply({
+                content: `\`❌\` | ${client.user} is under maintenance. Sorry for the inconvinience.\n\nThank You.`,
+                components: [row],
+                ephemeral: true,
+            });
+        }
+
         const msg_cmd = [
-            `[COMMAND] ${command.name}`,
+            `[SLASH] ${command.name}`,
             `used by ${interaction.user.tag} from ${interaction.guild.name} (${interaction.guild.id})`,
         ];
 
         console.log(`${msg_cmd.join(" ")}`);
 
-        const warning = new EmbedBuilder().setColor(client.color).setTimestamp();
-        const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setLabel("Support").setURL(supportUrl).setStyle(ButtonStyle.Link)
-        );
+        const userBan = await Ban.findOne({ userID: interaction.user.id });
+
+        if (userBan && userBan.isBanned === true && interaction.user.id !== client.owner) {
+            return interaction.reply({
+                content: `\`❌\` | You are banned from using ${client.user}, click the button support to appeal.`,
+                components: [row],
+                ephemeral: true,
+            });
+        }
 
         //Default Permission
         const botPermissions = ["ViewChannel", "SendMessages", "EmbedLinks"];
@@ -41,19 +59,19 @@ module.exports.run = async (client, interaction) => {
             });
         }
 
+        const warning = new EmbedBuilder().setColor(client.color);
+
         //Check Bot Command Permissions
         if (!interaction.guild.members.cache.get(client.user.id).permissions.has(command.permissions.bot || [])) {
-            await warning.setDescription(
-                `\`❌\` | I don't have permission \`${command.permissions.bot.join(", ")}\` to execute this command.`
-            );
+            warning.setDescription(`\`❌\` | I don't have permission \`${command.permissions.bot.join(", ")}\` to execute this command.`);
 
             return interaction.reply({ embeds: [warning], components: [row], ephemeral: true });
         }
 
         //Check User Permissions
         if (!interaction.member.permissions.has(command.permissions.user || [])) {
-            await warning.setDescription(
-                `\`❌\` | You don't have permission \`${command.permissions.user.join(", ")}\` to execute this command.`
+            warning.setDescription(
+                `\`❌\` | You don't have permission \`${command.permissions.user.join(", ")}\` to execute this command.`,
             );
 
             return interaction.reply({ embeds: [warning], components: [row], ephemeral: true });
@@ -63,14 +81,14 @@ module.exports.run = async (client, interaction) => {
         let player = client.poru.players.get(interaction.guild.id);
         //Player check
         if (command.settings.player && !player) {
-            await warning.setDescription(`\`❌\` | There isn't player exists for this server.`);
+            warning.setDescription(`\`❌\` | There isn't player exists for this server.`);
 
             return interaction.reply({ embeds: [warning], ephemeral: true });
         }
 
         //Current Playing Check
         if (command.settings.current && !player.currentTrack) {
-            await warning.setDescription(`\`❌\` | There isn't any current playing right now.`);
+            warning.setDescription(`\`❌\` | There isn't any current playing right now.`);
 
             return interaction.reply({ embeds: [warning], ephemeral: true });
         }
@@ -80,7 +98,7 @@ module.exports.run = async (client, interaction) => {
         //In Voice Channel Check
         if (command.settings.inVc) {
             if (!channel) {
-                await warning.setDescription(`\`❌\` | You must be in a voice channel to use this command.`);
+                warning.setDescription(`\`❌\` | You must be in a voice channel to use this command.`);
 
                 return interaction.reply({ embeds: [warning], ephemeral: true });
             }
@@ -92,10 +110,10 @@ module.exports.run = async (client, interaction) => {
                     .permissionsIn(channel)
                     .has(command.permissions.channel || [])
             ) {
-                await warning.setDescription(
+                warning.setDescription(
                     `\`❌\` | I don't have permission \`${command.permissions.channel.join(
-                        ", "
-                    )}\` to execute this command in this channel.`
+                        ", ",
+                    )}\` to execute this command in this channel.`,
                 );
 
                 return interaction.reply({ embeds: [warning], components: [row], ephemeral: true });
@@ -105,7 +123,7 @@ module.exports.run = async (client, interaction) => {
         //Same Voice Channel Check
         if (command.settings.sameVc) {
             if (!channel || interaction.member.voice.channelId !== interaction.guild.members.me.voice.channelId) {
-                await warning.setDescription(`\`❌\` | You must be on the same voice channel as mine to use this command.`);
+                warning.setDescription(`\`❌\` | You must be on the same voice channel as mine to use this command.`);
 
                 return interaction.reply({ embeds: [warning], ephemeral: true });
             }
@@ -117,10 +135,10 @@ module.exports.run = async (client, interaction) => {
                     .permissionsIn(channel)
                     .has(command.permissions.channel || [])
             ) {
-                await warning.setDescription(
+                warning.setDescription(
                     `\`❌\` | I don't have permission \`${command.permissions.channel.join(
-                        ", "
-                    )}\` to execute this command in this channel.`
+                        ", ",
+                    )}\` to execute this command in this channel.`,
                 );
 
                 return interaction.reply({ embeds: [warning], components: [row], ephemeral: true });
@@ -130,7 +148,7 @@ module.exports.run = async (client, interaction) => {
         // Premium User Check
         if (command.settings.premium) {
             if (user && !user.isPremium) {
-                await warning.setDescription(`\`❌\` | You're not premium user!`);
+                warning.setDescription(`\`❌\` | You're not premium user!`);
 
                 return interaction.reply({ embeds: [warning], components: [row], ephemeral: true });
             }
@@ -138,7 +156,7 @@ module.exports.run = async (client, interaction) => {
 
         //Check Owner
         if (command.settings.owner && interaction.user.id !== client.owner) {
-            await warning.setDescription(`\`❌\` | Only my owner can use this command!`);
+            warning.setDescription(`\`❌\` | Only my owner can use this command!`);
 
             return interaction.reply({ embeds: [warning], ephemeral: true });
         }
@@ -149,7 +167,7 @@ module.exports.run = async (client, interaction) => {
         } catch (error) {
             console.log(error);
 
-            await warning.setDescription(`\`❌\` | Something went wrong.`);
+            warning.setDescription(`\`❌\` | Something went wrong.`);
 
             return interaction.editReply({ embeds: [warning], components: [row], ephmeral: true });
         }

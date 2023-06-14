@@ -7,18 +7,23 @@ module.exports = {
     aliases: ["node"],
     owner: true,
     run: async (client, message) => {
-        const node = client.poru.leastUsedNodes[0];
+        const nodes = client.poru.leastUsedNodes;
 
         const embed = new EmbedBuilder()
             .setAuthor({
                 name: `${client.user.username} Node Info!`,
                 iconURL: message.guild.iconURL({ dynamic: true }),
             })
-            .addFields([
+            .setColor(client.color)
+            .setTimestamp(Date.now());
+
+        for (const node of nodes) {
+            const stats = node.stats;
+            const fields = [
                 {
-                    name: `**Node ${node.name} Connected**`,
-                    value: `\`\`\`Player: ${node.stats.players}\nPlaying Players: ${node.stats.playingPlayers}\nUptime: ${new Date(
-                        node.stats.uptime
+                    name: `**Node ${node.name} Connected **`,
+                    value: `\`\`\`Connected: ${node.stats.players}\nPlaying: ${node.stats.playingPlayers}\nUptime: ${new Date(
+                        node.stats.uptime,
                     )
                         .toISOString()
                         .slice(11, 19)}\`\`\``,
@@ -34,15 +39,16 @@ module.exports = {
                 {
                     name: "Memory Info",
                     value: `\`\`\`Reservable Memory: ${Math.round(node.stats.memory.reservable / 1024 / 1024)}mb\nUsed Memory: ${Math.round(
-                        node.stats.memory.used / 1024 / 1024
+                        node.stats.memory.used / 1024 / 1024,
                     )}mb\nFree Memory: ${Math.round(node.stats.memory.free / 1024 / 1024)}mb\nAllocated Memory: ${Math.round(
-                        node.stats.memory.allocated / 1024 / 1024
+                        node.stats.memory.allocated / 1024 / 1024,
                     )}mb\`\`\``,
                     inline: false,
                 },
-            ])
-            .setColor(client.color)
-            .setTimestamp(Date.now());
+            ];
+
+            embed.addFields(fields);
+        }
 
         return message.channel.send({ embeds: [embed] });
     },

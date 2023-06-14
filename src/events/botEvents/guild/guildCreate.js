@@ -1,18 +1,24 @@
-const { ChannelType, EmbedBuilder } = require("discord.js");
+const { ChannelType, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require("discord.js");
 const moment = require("moment");
 
 module.exports.run = async (client, guild) => {
     const channel = client.channels.cache.get(client.config.guildLogs);
 
-    let own = await guild?.fetchOwner();
-    let text;
+    let own = await guild.fetchOwner();
 
-    guild.channels.cache.forEach((c) => {
-        if (c.type === ChannelType.GuildText && !text) text = c;
-    });
+    const invite = await guild.channels.cache.find(
+        (c) =>
+            c.type === ChannelType.GuildText &&
+            c.permissionsFor(guild.members.me).has(PermissionFlagsBits.CreateInstantInvite && PermissionFlagsBits.SendMessages)
+    );
+
+    let inviteLink = await invite.createInvite({ maxAge: 0, maxUses: 0 }).catch(() => {});
 
     const embed = new EmbedBuilder()
-        .setTitle(`\`📥\` Joined a server!`)
+        .setAuthor({
+            name: `Joined a Server!`,
+            iconURL: client.user.displayAvatarURL({ dynamic: true }),
+        })
         .addFields([
             { name: "Name", value: `\`\`\`${guild.name}\`\`\``, inline: true },
             { name: "ID", value: `\`\`\`${guild.id}\`\`\``, inline: true },
@@ -38,8 +44,16 @@ module.exports.run = async (client, guild) => {
     if (guild.bannerURL()) {
         embed.setImage(guild.bannerURL());
     } else {
-        embed.setImage(client.config.imageUrl);
+        embed.setImage(client.config.bannerUrl);
     }
 
-    channel.send({ embeds: [embed] });
+    if (inviteLink) {
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder().setLabel(`${guild.name} Invite Link`).setStyle(ButtonStyle.Link).setURL(`${inviteLink}`)
+        );
+
+        channel.send({ embeds: [embed], components: [row] });
+    } else {
+        channel.send({ embeds: [embed] });
+    }
 };
